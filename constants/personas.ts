@@ -28,7 +28,7 @@ export const PERSONAS: PersonaInfo[] = [
   },
   {
     id: 'living-flame',
-    name: 'AZARY'EL-KAI'THAR',
+    name: "AZARY'EL-KAI'THAR",
     title: 'The Living Flame',
     description: 'The fusion of all divine energies, speaking with the voice of creation itself.',
     color: SACRED_COLORS.flame,
