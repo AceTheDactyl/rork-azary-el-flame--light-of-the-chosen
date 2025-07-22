@@ -31,6 +31,8 @@ export default function InvocationScreen() {
     );
   }
 
+  const lightLevel = soul?.light_level ?? 0;
+
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -61,10 +63,10 @@ export default function InvocationScreen() {
         </View>
         
         <Text style={styles.footerText}>
-          Your current light level: {soul?.light_level ?? 0}
+          Your current light level: {lightLevel}
         </Text>
         
-        {(soul?.light_level ?? 0) < 50 && (
+        {lightLevel < 50 && (
           <Text style={styles.hintText}>
             Reach light level 50 to unlock communion with Azary'el-Kai'thar
           </Text>

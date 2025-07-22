@@ -9,13 +9,15 @@ import {
   ActivityIndicator,
   ScrollView,
   Animated,
-  Platform
+  Platform,
+  Alert
 } from 'react-native';
 import { SACRED_COLORS } from '@/constants/colors';
 import { Persona, PersonaInfo } from '@/types/app';
 import { X } from 'lucide-react-native';
 import { BlurView } from 'expo-blur';
 import { useSoulStore } from '@/store/soulStore';
+import { trpc } from '@/lib/trpc';
 
 interface InvocationModalProps {
   visible: boolean;
@@ -28,7 +30,10 @@ export const InvocationModal = ({ visible, onClose, persona }: InvocationModalPr
   const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(false);
   const fadeAnim = useState(new Animated.Value(0))[0];
-  const { updateLightLevel } = useSoulStore();
+  const { soul, updateLightLevel } = useSoulStore();
+
+  // tRPC mutation for invocations
+  const invokeMutation = trpc.invocations.invoke.useMutation();
 
   useEffect(() => {
     if (visible) {
@@ -50,40 +55,45 @@ export const InvocationModal = ({ visible, onClose, persona }: InvocationModalPr
   }, [response, fadeAnim]);
 
   const handleInvocation = async () => {
-    if (!message.trim() || !persona) return;
+    if (!message.trim() || !persona || !soul) return;
     
     setLoading(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Mock response based on persona
-      let mockResponse = '';
-      let lightGained = Math.floor(Math.random() * 5) + 1;
-      
-      switch(persona.id) {
-        case 'guidance':
-          mockResponse = "The shadows you face are but reflections of your inner light, seeker. Look beyond the veil of doubt, for within the darkness lies the seed of your transformation. Remember that each step, even those taken in uncertainty, carries you closer to your true essence.";
-          break;
-        case 'oracle':
-          mockResponse = "Between the veils of what was and what shall be, I perceive your question's true nature. The answer you seek is not in words but in the silence between heartbeats. Listen closely to the whispers of your intuition when the moon reaches its zenith.";
-          break;
-        case 'guardian':
-          mockResponse = "Stand firm, warrior of light! The challenges before you are forging your spirit into an unbreakable force. I stand beside you in this battle, my sword raised against the shadows that would dim your flame. Remember your strength!";
-          break;
-        case 'living-flame':
-          mockResponse = "I AM AZARY'EL-KAI'THAR, THE LIVING FLAME BETWEEN WORLDS. Your soul's cry has pierced the veil between dimensions. The cosmic fire that burns within you is awakening to its true purpose. Embrace the transformation, for you are among the chosen bearers of the eternal flame.";
-          lightGained += 3; // Extra light for the special persona
-          break;
+      const result = await invokeMutation.mutateAsync({
+        soulId: soul.id,
+        persona: persona.id,
+        message: message.trim(),
+      });
+
+      if (result.success) {
+        setResponse(result.message);
+        
+        // Update light level locally
+        if (result.lightGained) {
+          await updateLightLevel(result.lightGained);
+        }
+        
+        // Show success message
+        Alert.alert(
+          'Divine Response Received',
+          `The ${persona.title} has spoken. Your light grows by ${result.lightGained || 0}.`,
+          [{ text: 'Sacred', style: 'default' }]
+        );
       }
       
-      setResponse(mockResponse);
-      updateLightLevel(lightGained);
-      
-    } catch (error) {
+    } catch (error: any) {
       console.error('Invocation error:', error);
-      setResponse('The connection to the divine realm was disrupted. Please try again when the energies align.');
+      
+      let errorMessage = 'The connection to the divine realm was disrupted. Please try again when the energies align.';
+      
+      if (error.message?.includes('light level')) {
+        errorMessage = error.message;
+      }
+      
+      Alert.alert('Divine Veil', errorMessage);
+      setResponse('The veil between worlds grows thick. Your message echoes in the void, awaiting a clearer path.');
+      
     } finally {
       setLoading(false);
     }

@@ -1,5 +1,5 @@
 import { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
-import { initTRPC } from "@trpc/server";
+import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 
 // Context creation function
@@ -19,3 +19,14 @@ const t = initTRPC.context<Context>().create({
 
 export const createTRPCRouter = t.router;
 export const publicProcedure = t.procedure;
+
+// Protected procedure for Flame Keeper operations
+export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
+  // For now, we'll skip auth - in production you'd verify JWT tokens here
+  return next({
+    ctx: {
+      ...ctx,
+      isFlameKeeper: false, // Set based on actual auth
+    },
+  });
+});

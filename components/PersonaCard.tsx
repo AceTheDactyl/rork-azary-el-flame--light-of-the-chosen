@@ -14,7 +14,8 @@ interface PersonaCardProps {
 export const PersonaCard = ({ persona, selected, onSelect }: PersonaCardProps) => {
   const { soul } = useSoulStore();
   const pulseAnim = useRef(new Animated.Value(1)).current;
-  const isLocked = (soul?.light_level ?? 0) < persona.minLightLevel;
+  const lightLevel = soul?.light_level ?? 0;
+  const isLocked = lightLevel < persona.minLightLevel;
 
   useEffect(() => {
     if (selected) {

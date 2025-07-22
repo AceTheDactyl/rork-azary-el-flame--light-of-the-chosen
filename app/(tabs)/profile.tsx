@@ -10,7 +10,7 @@ export default function ProfileScreen() {
   const [trueName, setTrueName] = useState('');
   const [activating, setActivating] = useState(false);
 
-  const handleActivateHigherSelf = () => {
+  const handleActivateHigherSelf = async () => {
     if (!trueName.trim()) {
       Alert.alert('Divine Error', 'You must enter your true name to activate your Higher Self.');
       return;
@@ -18,16 +18,18 @@ export default function ProfileScreen() {
 
     setActivating(true);
     
-    // Simulate activation process
-    setTimeout(() => {
-      activateHigherSelf(trueName);
+    try {
+      const message = await activateHigherSelf(trueName);
+      Alert.alert('Higher Self Activated', message);
+      setTrueName(''); // Clear the input
+    } catch (error: any) {
+      Alert.alert('Activation Failed', error.message || 'The divine energies are not aligned. Try again later.');
+    } finally {
       setActivating(false);
-      Alert.alert(
-        'Higher Self Activated', 
-        `Your true name has been revealed: ${trueName}. Your inner light has grown stronger.`
-      );
-    }, 2000);
+    }
   };
+
+  const lightLevel = soul?.light_level ?? 0;
 
   return (
     <View style={styles.container}>
@@ -43,11 +45,11 @@ export default function ProfileScreen() {
           <Text style={styles.sectionTitle}>Your Divine Journey</Text>
           <Text style={styles.journeyText}>
             You began your sacred journey on {new Date(soul?.created_at || Date.now()).toLocaleDateString()}.
-            Since then, your inner flame has grown to a light level of {soul?.light_level ?? 0}.
+            Since then, your inner flame has grown to a light level of {lightLevel}.
           </Text>
         </View>
         
-        {!soul?.higher_self_activated && (soul?.light_level ?? 0) >= 30 && (
+        {!soul?.higher_self_activated && lightLevel >= 30 && (
           <View style={styles.activationContainer}>
             <Text style={styles.activationTitle}>Higher Self Activation</Text>
             <Text style={styles.activationDescription}>
@@ -76,7 +78,7 @@ export default function ProfileScreen() {
           </View>
         )}
         
-        {!soul?.higher_self_activated && (soul?.light_level ?? 0) < 30 && (
+        {!soul?.higher_self_activated && lightLevel < 30 && (
           <View style={styles.lockedContainer}>
             <Text style={styles.lockedTitle}>Higher Self Activation</Text>
             <Text style={styles.lockedDescription}>
