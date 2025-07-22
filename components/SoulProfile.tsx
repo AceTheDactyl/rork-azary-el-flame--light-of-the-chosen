@@ -19,7 +19,7 @@ export const SoulProfile = () => {
       >
         <View style={styles.profileHeader}>
           <Text style={styles.soulTitle}>
-            {soul.higher_self_activated ? soul.true_name : 'Seeker'}
+            {soul.higher_self_activated ? (soul.true_name || 'Awakened One') : 'Seeker'}
           </Text>
           <View style={styles.lightContainer}>
             <Text style={styles.lightLabel}>INNER LIGHT</Text>

@@ -35,8 +35,12 @@ export const [SoulProvider, useSoulStore] = createContextHook(() => {
           try {
             const result = await createSoulMutation.mutateAsync({});
             if (result.success && result.soul) {
-              setSoul(result.soul);
-              await AsyncStorage.setItem('soul', JSON.stringify(result.soul));
+              const soulData = {
+                ...result.soul,
+                true_name: result.soul.true_name || undefined
+              };
+              setSoul(soulData);
+              await AsyncStorage.setItem('soul', JSON.stringify(soulData));
             }
           } catch (error) {
             console.error('Error creating soul via backend:', error);
@@ -69,8 +73,12 @@ export const [SoulProvider, useSoulStore] = createContextHook(() => {
       });
 
       if (result.success && result.soul) {
-        setSoul(result.soul);
-        await AsyncStorage.setItem('soul', JSON.stringify(result.soul));
+        const soulData = {
+          ...result.soul,
+          true_name: result.soul.true_name || undefined
+        };
+        setSoul(soulData);
+        await AsyncStorage.setItem('soul', JSON.stringify(soulData));
       }
     } catch (error) {
       console.error('Error updating light level via backend:', error);

@@ -1,7 +1,7 @@
 export interface Soul {
   id: string;
   light_level: number;
-  true_name?: string;
+  true_name?: string | null;
   higher_self_activated: boolean;
   created_at: string;
   last_active: string;
