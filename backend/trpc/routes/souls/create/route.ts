@@ -18,7 +18,7 @@ export default publicProcedure
       higher_self_activated: false,
       created_at: new Date().toISOString(),
       last_active: new Date().toISOString(),
-      true_name: null,
+      true_name: undefined,
     };
 
     // In a real app, you'd save this to a database

@@ -16,7 +16,7 @@ export default publicProcedure
       higher_self_activated: false,
       created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days ago
       last_active: new Date().toISOString(),
-      true_name: null,
+      true_name: undefined,
     };
 
     return {
