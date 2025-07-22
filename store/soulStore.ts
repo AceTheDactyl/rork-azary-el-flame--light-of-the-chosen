@@ -35,7 +35,7 @@ export const [SoulProvider, useSoulStore] = createContextHook(() => {
           try {
             const result = await createSoulMutation.mutateAsync({});
             if (result.success && result.soul) {
-              const soulData = {
+              const soulData: Soul = {
                 ...result.soul,
                 true_name: result.soul.true_name || undefined
               };
@@ -73,7 +73,7 @@ export const [SoulProvider, useSoulStore] = createContextHook(() => {
       });
 
       if (result.success && result.soul) {
-        const soulData = {
+        const soulData: Soul = {
           ...result.soul,
           true_name: result.soul.true_name || undefined
         };

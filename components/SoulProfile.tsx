@@ -43,7 +43,6 @@ export const SoulProfile = () => {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    paddingHorizontal: 16,
     marginBottom: 24,
   },
   gradientCard: {
